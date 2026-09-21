@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>DisplayStockAPI-local</UserSecretsId>
+    <DefaultItemExcludes>$(DefaultItemExcludes);DisplayStockAPI.Domain/**;DisplayStockAPI.Application/**;DisplayStockAPI.Infrastructure/**;tests/**;node_modules/**</DefaultItemExcludes>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <ProjectReference Include="DisplayStockAPI.Application/DisplayStockAPI.Application.csproj" />
+    <ProjectReference Include="DisplayStockAPI.Infrastructure/DisplayStockAPI.Infrastructure.csproj" />
+    <Content Include="Database/*.sql" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+</Project>

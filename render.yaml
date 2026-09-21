@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: display-stock-api
+    runtime: docker
+    plan: free
+    region: virginia
+    healthCheckPath: /health
+    envVars:
+      - key: Auth__Username
+        sync: false
+      - key: Auth__PasswordHash
+        sync: false
+      - key: Database__Initialize
+        value: "true"
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DisplayStock
+        fromDatabase:
+          name: display-stock-db
+          property: connectionString
+
+databases:
+  - name: display-stock-db
+    plan: free
+    region: virginia

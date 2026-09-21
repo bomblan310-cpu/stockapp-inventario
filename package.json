@@ -1,0 +1,6 @@
+{
+  "name": "display-stock-verification",
+  "private": true,
+  "scripts": { "test:inventory": "node tests/inventory.cjs" },
+  "devDependencies": { "playwright": "1.63.0" }
+}

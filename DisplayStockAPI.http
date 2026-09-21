@@ -1,0 +1,6 @@
+@DisplayStockAPI_HostAddress = http://localhost:5168
+
+GET {{DisplayStockAPI_HostAddress}}/health
+Accept: application/json
+
+###
