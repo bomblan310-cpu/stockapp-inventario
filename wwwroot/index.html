@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>StockApp · Inventario</title>
+  <link rel="stylesheet" href="/workspace.css?v=20260920-1">
+  <link rel="stylesheet" href="/inventory-layout.css?v=20260920-1">
+  <link rel="stylesheet" href="/carbon-theme.css?v=20260920-1">
+  <link rel="stylesheet" href="/agent-dashboard.css?v=1">
+  <link rel="stylesheet" href="/dashboard-grid.css?v=7">
+  <script src="/numbers.js?v=20260920-1" defer></script>
+  <script src="/app.js?v=20260921-short-status" defer></script>
+</head>
+<body>
+  <header class="workspace-nav">
+    <a href="#resumen" class="logo"><span aria-hidden="true">S</span><div>StockApp<small>CONTROL DE INVENTARIO</small></div></a>
+    <nav aria-label="Menú principal">
+      <a href="#resumen">Resumen</a>
+      <a href="#productos">Productos</a>
+      <a href="#entrada">Registrar entrada</a>
+      <a href="#salida">Registrar salida</a>
+      <a href="#historial">Historial</a>
+      <a href="#reportes">Reportes</a>
+      <a href="#categorias">Categorías</a>
+    </nav>
+    <p class="navigation-note"><span id="signedInUser">Administrador</span><br><button id="logout" class="secondary" type="button">Cerrar sesión</button></p>
+  </header>
+  <main>
+    <header class="page-header"><div><p class="eyebrow">CENTRO DE OPERACIONES</p><h1 id="pageTitle">Productos y stock</h1></div><div class="header-tools"><span class="system-state"><i></i> Sistema activo</span><button id="refresh" class="secondary"><span aria-hidden="true">↻</span> Actualizar datos</button></div></header>
+    <div id="message" role="status" aria-live="polite" hidden></div>
+    <section id="resumen" class="page">
+      <div class="workspace-tabs"><span>Resumen del inventario</span><a href="#productos">Productos</a><a href="#historial">Movimientos</a><a href="#reportes">Reportes</a></div>
+      <div id="overview" class="cards" aria-label="Resumen del inventario"></div>
+      <section id="movementChart" class="movement-chart" aria-label="Movimientos de los últimos 7 días"></section>
+    </section>
+    <section id="productos" class="page" hidden>
+      <div class="section-head"><h2>Listado de productos</h2><div class="actions"><a class="button secondary" href="#entrada">Registrar entrada</a><a class="button secondary" href="#salida">Registrar salida</a><a class="button" href="#nuevo">＋ Cargar producto</a></div></div>
+      <div class="filters"><label class="grow">Buscar<input id="search" type="search" placeholder="Nombre o marca"></label><label>Categoría<select id="productCategory"><option value="">Todas</option></select></label><label>Disponibilidad<select id="stockFilter"><option value="">Todos</option><option value="low">Por reponer (0–2)</option><option value="empty">Sin unidades</option></select></label></div>
+      <article class="panel table-wrap"><table><thead><tr><th>Producto</th><th>Marca</th><th>Categoría</th><th>Precio unitario</th><th>Stock</th><th>Acciones</th></tr></thead><tbody id="productRows"></tbody></table><p id="productCount" class="muted"></p></article>
+    </section>
+    <section id="nuevo" class="page" hidden>
+      <p class="lead">Completa los datos del producto. La cantidad inicial se guardará como una entrada.</p>
+      <form id="productForm" class="panel form-panel">
+        <h2 id="productFormTitle">Cargar producto</h2><input name="id" type="hidden">
+        <label>Nombre del producto<input name="name" required maxlength="120" placeholder="Ej.: Display Samsung A12"></label>
+        <div class="form-grid"><label>Marca<input name="brand" required maxlength="80" placeholder="Ej.: Samsung"></label><label>Categoría<select name="category" required></select><a href="#categorias" class="text-link">Administrar categorías</a></label></div>
+        <div class="form-grid"><label>Precio unitario<input name="price" type="text" inputmode="decimal" data-number="decimal" required data-min="0" data-max="999999999" placeholder="Ej.: 125.000,50"><small class="muted">Punto para miles y coma para decimales.</small></label><label>Cantidad inicial<input name="quantity" type="text" inputmode="numeric" data-number="integer" required data-min="0" data-max="2147483647" value="0"></label></div>
+        <p id="editHint" class="hint" hidden>La cantidad no se edita aquí. Usa Registrar entrada o Registrar salida para conservar el historial.</p>
+        <div class="actions"><button type="submit">Guardar producto</button><a href="#productos" class="button secondary">Cancelar</a></div>
+        <div id="productManage" hidden><h3>Administrar este producto</h3><p id="productManageHelp" class="muted"></p><div id="productManageActions" class="actions"></div></div>
+      </form>
+    </section>
+    <section id="entrada" class="page" hidden>
+      <p class="lead">¿Recibiste más unidades? Selecciona un producto y registra la cantidad.</p>
+      <form id="entryForm" class="panel form-panel"><h2>Registrar entrada</h2>
+        <label>Producto<select name="productId" required></select></label>
+        <p class="stock-preview"></p>
+        <label>Cantidad recibida<input name="quantity" type="text" inputmode="numeric" data-number="integer" data-min="1" data-max="2147483647" required placeholder="Ej.: 1.000"></label>
+        <label>Motivo o referencia <span class="muted">(opcional)</span><textarea name="reason" maxlength="300" rows="3" placeholder="Ej.: Compra a proveedor, factura 125"></textarea></label>
+        <p class="hint">Estas unidades se sumarán a la cantidad disponible.</p><button type="submit">Confirmar entrada</button>
+      </form>
+    </section>
+    <section id="salida" class="page" hidden>
+      <p class="lead">Registra las unidades que vendiste, utilizaste o retiraste.</p>
+      <form id="exitForm" class="panel form-panel"><h2>Registrar salida</h2>
+        <label>Producto<select name="productId" required></select></label>
+        <p class="stock-preview"></p>
+        <label>Cantidad retirada<input name="quantity" type="text" inputmode="numeric" data-number="integer" data-min="1" data-max="2147483647" required placeholder="Ej.: 1.000"></label>
+        <label>Motivo o referencia <span class="muted">(opcional)</span><textarea name="reason" maxlength="300" rows="3" placeholder="Ej.: Venta a cliente, reparación, producto dañado"></textarea></label>
+        <p class="hint">Estas unidades se descontarán del inventario y quedarán registradas en el historial.</p><button type="submit">Confirmar salida</button>
+      </form>
+    </section>
+    <section id="historial" class="page" hidden>
+      <p class="lead">Cada movimiento, con su fecha, cantidad y motivo.</p>
+      <form id="historyFilters" class="filters">
+        <label>Desde<input name="from" type="date" required></label><label>Hasta<input name="to" type="date" required></label>
+        <label class="grow">Producto<select name="productId"><option value="">Todos, incluidos archivados</option></select></label>
+        <label>Tipo<select name="type"><option value="">Todos</option><option value="Added">Carga inicial</option><option value="Restocked">Entrada</option><option value="Used">Salida</option><option value="Updated">Edición de datos</option><option value="Voided">Carga anulada</option></select></label>
+        <button>Consultar historial</button>
+      </form>
+      <article class="panel table-wrap"><table><thead><tr><th>Fecha y hora</th><th>Producto / marca</th><th>Tipo</th><th>Unidades</th><th>Disponible después</th><th>Motivo</th></tr></thead><tbody id="historyRows"></tbody></table><div class="pagination"><button id="previous" class="secondary">Anterior</button><span id="historyCount"></span><button id="next" class="secondary">Siguiente</button></div></article>
+    </section>
+    <section id="reportes" class="page" hidden>
+      <p class="lead">El reporte resume las unidades que entraron y salieron en un período.</p>
+      <form id="reportFilters" class="filters"><label>Desde<input name="from" type="date" required></label><label>Hasta<input name="to" type="date" required></label><label class="grow">Producto<select name="productId"><option value="">Todos los productos</option></select></label><button>Generar reporte</button></form>
+      <p class="report-guide muted">Selecciona las fechas y pulsa Generar reporte para consultar las unidades que entraron y salieron.</p>
+      <div id="reportOutput" hidden>
+        <div class="section-head"><h2 id="reportPeriod"></h2><div class="actions"><button id="exportReport" class="secondary">Descargar CSV</button><button id="printReport" class="secondary">Imprimir / PDF</button></div></div>
+        <div id="reportCards" class="cards"></div>
+        <article class="panel"><h2>Inventario actual</h2><p class="muted">Cantidades y valor a precio registrado de hoy, no un saldo histórico ni ganancias. Las cargas iniciales se incluyen en las entradas del período.</p><div class="table-wrap"><table><thead><tr><th>Producto</th><th>Marca</th><th>Disponible hoy</th><th>Precio</th><th>Valor actual</th></tr></thead><tbody id="reportRows"></tbody></table></div></article>
+      </div>
+    </section>
+    <section id="categorias" class="page" hidden>
+      <p class="lead">Organiza tus productos: displays, repuestos, accesorios…</p>
+      <form id="categoryForm" class="panel filters"><label class="grow">Nueva categoría<input name="name" required maxlength="80" placeholder="Ej.: Displays"></label><button>Guardar categoría</button></form>
+      <article class="panel"><h2>Categorías registradas</h2><div id="categoryList"></div></article>
+    </section>
+    <footer>Los cambios se guardan en el inventario. Fechas mostradas en la zona horaria de este dispositivo.</footer>
+  </main>
+  <dialog id="confirmDialog"><form method="dialog"><h2>Archivar producto</h2><p id="confirmText"></p><p class="muted">El historial se conserva. Solo puedes archivar productos sin unidades.</p><label id="voidReasonLabel" hidden>Motivo de la anulación<textarea id="voidReason" maxlength="300" rows="3" placeholder="Ej.: Cargué este producto por error"></textarea></label><div class="actions"><button value="cancel" class="secondary" formnovalidate>Cancelar</button><button value="confirm" class="danger">Archivar</button></div></form></dialog>
+</body>
+</html>

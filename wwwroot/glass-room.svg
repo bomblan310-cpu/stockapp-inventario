@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="wall" x2=".9" y2="1"><stop stop-color="#eae9e4"/><stop offset="1" stop-color="#c8cfcc"/></linearGradient>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#c3d3dc"/><stop offset=".55" stop-color="#e5ecec"/><stop offset="1" stop-color="#adbaba"/></linearGradient>
+    <linearGradient id="floor" x2="1" y2="1"><stop stop-color="#f3f1eb"/><stop offset="1" stop-color="#b5bebe"/></linearGradient>
+    <linearGradient id="light"><stop stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <pattern id="city" width="150" height="300" patternUnits="userSpaceOnUse"><rect x="5" y="110" width="39" height="190" fill="#a3afb2"/><rect x="51" y="160" width="35" height="140" fill="#bcc5c7"/><rect x="96" y="80" width="45" height="220" fill="#b0bdc0"/><path d="M10 140h27m-27 25h27m-27 25h27m-27 25h27m-27 25h27m64-130h30m-30 25h30m-30 25h30m-30 25h30m-30 25h30m-30 25h30" stroke="#d7e0df" stroke-width="6"/></pattern>
+    <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+  <path fill="url(#wall)" d="M0 0h1920v1200H0z"/>
+  <path d="M0 0l460 125v665L0 1090zM1920 0l-390 135v650l390 290z" fill="url(#sky)"/>
+  <path d="M0 440l460 40v310L0 1090zM1530 470l390-50v655l-390-290z" fill="url(#city)" opacity=".5" filter="url(#soft)"/>
+  <path d="M0 1090l460-300 1070-5 390 290v125H0z" fill="url(#floor)"/>
+  <path d="M0 0l460 125 1070 10L1920 0z" fill="#f4f1ea"/>
+  <g stroke="#f7f7f1" stroke-width="24"><path d="M145 40v953M309 85v801M453 123v671M1670 86v800M1831 27v983"/><path d="M0 381l460 75M0 757l460-43M1530 451l390-73M1530 712l390 33"/></g>
+  <g stroke="#929e9d" stroke-width="3" opacity=".55"><path d="M161 44v938M325 87v786M1686 82v815M1847 22v999"/></g>
+  <path d="M0 1090l460-300 375 410H0z" fill="url(#light)"/>
+  <path d="M0 1105l800 95M136 1000l887 200M297 900l940 300M453 794l1060 406" stroke="#8f9d9e" stroke-width="13" opacity=".13"/>
+  <path d="M1040 0v111" stroke="#717873" stroke-width="3"/>
+  <rect x="494" y="768" width="980" height="8" fill="#88958a" opacity=".12"/>
+  <ellipse cx="1340" cy="845" rx="220" ry="60" fill="#687967" opacity=".09" filter="url(#soft)"/>
+</svg>

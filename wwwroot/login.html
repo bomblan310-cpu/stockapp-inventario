@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ingresar · StockApp</title>
+  <link rel="stylesheet" href="/workspace.css?v=20260920-1">
+  <link rel="stylesheet" href="/carbon-theme.css?v=20260920-1">
+  <link rel="stylesheet" href="/agent-dashboard.css?v=1">
+  <link rel="stylesheet" href="/login.css?v=2">
+  <script src="/login.js?v=1" defer></script>
+</head>
+<body>
+  <main class="login-shell">
+    <form id="loginForm" class="panel form-panel">
+      <div class="mobile-brand"><a class="logo" href="/login.html"><span>S</span><div>StockApp</div></a></div>
+      <div><p class="eyebrow">ACCESO PRIVADO</p><h1>Bienvenido</h1></div>
+      <p class="muted">Ingresa con tu cuenta para administrar productos, entradas y salidas.</p>
+      <label>Usuario<input name="username" autocomplete="username" required maxlength="80" autofocus></label>
+      <label>Contraseña<input name="password" type="password" autocomplete="current-password" required maxlength="256"></label>
+      <label class="show-password"><input id="showPassword" type="checkbox"> Mostrar contraseña</label>
+      <p id="loginError" role="alert" hidden></p>
+      <button type="submit">Ingresar al inventario →</button>
+      <p class="muted login-note">Acceso exclusivo para usuarios autorizados. La sesión vence a las 8 horas.</p>
+    </form>
+  </main>
+</body>
+</html>

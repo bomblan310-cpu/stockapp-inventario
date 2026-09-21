@@ -1,0 +1,89 @@
+/* Work-oriented inventory layout. No business or API changes. */
+body{background:#0c1220}
+.workspace-nav{
+  position:fixed;inset:0 auto 0 0;width:245px;margin:0;padding:28px 18px;
+  display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;
+  gap:0;background:#111a2b;border:0;border-right:1px solid #adcaff20;
+  overflow-y:auto;z-index:5;
+}
+.logo{font-size:23px;padding:0 7px;gap:11px}
+.logo>span{width:35px;height:35px;border-radius:8px;font-size:24px;box-shadow:none;text-shadow:none;background:#273853}
+.logo small{font-size:9px;letter-spacing:1px}
+nav{display:grid;width:100%;order:initial;margin-top:36px;gap:6px;justify-content:stretch}
+nav a{padding:12px 14px;font-size:16px;border-radius:6px;line-height:1.4}
+nav a[aria-current="page"]{color:#eaf0fb;border-left:3px solid #bedaff;font-weight:600;padding-left:12px}
+nav a:is(:hover,:active,:focus-visible){background:#090f1c;border-color:#adcaff35}
+.navigation-note{margin:auto 10px 0;padding-top:35px;font-size:13px;color:#97abc8;line-height:1.7}
+main{max-width:none;margin:0 0 0 245px;padding:27px 32px}
+.page-header{padding-bottom:23px;border-bottom:1px solid #adcaff20;margin-bottom:23px}
+h1{font-size:29px;font-weight:600;letter-spacing:-.7px}
+.page-header .eyebrow{font-size:10px;margin-bottom:6px}
+.page-header>button{font-size:14px}
+.panel,.stat,.filters{background:#141e30;border-color:#a9caff23;border-radius:8px;box-shadow:none}
+button,.button{border-radius:6px;font-size:15px;min-height:42px;box-shadow:none}
+#productos{display:block}
+#overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:25px}
+#overview .stat{padding:16px 20px;min-height:110px;justify-content:flex-start}
+#overview .stat span{font-size:15px}
+#overview .stat strong{font-size:30px;letter-spacing:-.7px;margin:5px 0 0;line-height:1.25}
+#overview .stat small{font-size:12px;margin-top:3px}
+#overview .stat small:empty{display:none}
+#productos>.section-head{margin-bottom:18px;align-items:center;flex-wrap:wrap}
+.section-head h2{font-size:20px;letter-spacing:-.3px}
+#productos>.filters{display:flex;gap:16px;padding:17px 19px;margin-bottom:0;border-radius:8px 8px 0 0;border-bottom:0;align-items:end}
+#productos>.filters .grow{flex:2}
+#productos>.filters>label{min-width:180px;flex:1}
+label{font-size:15px}
+input,select,textarea{border-radius:5px;padding:10px 12px;font-size:16px}
+#productos>.table-wrap{padding:0 18px 12px;border-radius:0 0 8px 8px}
+table{font-size:15px}
+th{font-size:12px;padding-top:14px;padding-bottom:14px}
+td{padding-top:16px;padding-bottom:16px}
+td button{font-size:13px;min-height:36px;padding:7px 9px}
+.badge{border-radius:4px;font-size:13px}
+#productCount{font-size:14px;margin-top:18px}
+#nuevo,#entrada,#salida{display:block;max-width:900px}
+#nuevo>.lead,#entrada>.lead,#salida>.lead{margin-bottom:22px}
+.form-panel{padding:26px;gap:23px}
+.form-panel h2{font-size:22px}
+.form-grid{align-items:start}
+.hint,.stock-preview{font-size:15px}
+#historial>.filters,#reportes>.filters{background:#141e30;border-radius:8px}
+.report-guide{display:block;max-width:none;padding:20px;margin:0;background:#141e30;border:1px solid #adcaff20;border-radius:8px;font-size:16px}
+#categorias{grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr)}
+#categorias .panel h2{font-size:22px}
+footer{margin-top:24px;font-size:12px}
+@media(max-width:1200px){
+  .workspace-nav{width:225px;padding:25px 14px}
+  main{margin-left:225px;padding:24px}
+  nav{order:initial}
+  #overview{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:800px){
+  .workspace-nav{position:relative;inset:auto;width:auto;padding:18px;border-right:0;border-bottom:1px solid #adcaff20}
+  .logo{padding:0}
+  nav{display:flex;flex-wrap:wrap;margin-top:18px;gap:4px}
+  nav a{font-size:14px;padding:9px 10px}
+  nav a[aria-current="page"]{padding-left:8px}
+  .navigation-note{display:none}
+  main{margin:0;padding:22px 16px}
+  .page-header{gap:12px;flex-wrap:wrap}
+  h1{font-size:26px}
+  #overview{gap:10px}
+  #overview .stat{padding:14px;min-height:109px}
+  #overview .stat span{font-size:14px}
+  #productos>.filters{padding:16px;gap:14px}
+  #productos>.filters>label{min-width:135px}
+  #productos>.filters .grow{flex-basis:100%}
+  #productos>.section-head{gap:14px}
+  .section-head .actions{width:100%}
+  .section-head .actions .button{flex:1;font-size:14px;white-space:nowrap;padding:10px 12px}
+  #productos>.table-wrap{padding:0 10px 12px}
+  .form-panel{padding:22px 18px}
+  .form-grid{grid-template-columns:1fr}
+  #categorias{grid-template-columns:1fr}
+}
+@media print{
+  .workspace-nav{display:none}
+  main{margin:0;padding:0}
+}
