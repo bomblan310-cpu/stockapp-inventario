@@ -14,12 +14,5 @@ services:
         value: "true"
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: ConnectionStrings__DisplayStock
-        fromDatabase:
-          name: display-stock-db
-          property: connectionString
-
-databases:
-  - name: display-stock-db
-    plan: free
-    region: virginia
+      - key: DATABASE_URL
+        sync: false
