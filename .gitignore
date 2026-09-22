@@ -24,3 +24,4 @@ tests/artifacts/
 tests/auth-build/
 tests/render-publish/
 .render-secrets*
+.verify-*/
