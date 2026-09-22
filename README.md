@@ -45,19 +45,18 @@ En Development las migraciones se aplican al inicio. No insertan productos de de
 Las migraciones agregan columnas sin borrar registros; schema_migrations registra las ya ejecutadas.
 Las credenciales locales no se publican.
 
-## Render
+## Render y Neon
 
-Dockerfile y render.yaml incluyen API y PostgreSQL. Se soportan conexiones Npgsql y URL postgresql://.
+Dockerfile y render.yaml despliegan la API en Render. La base PostgreSQL externa se configura con la variable secreta `DATABASE_URL`; acepta la URL `postgresql://` proporcionada por Neon.
 El puerto se toma de PORT. Database__Initialize=true aplica migraciones al iniciar.
 
 1. Subir el repositorio sin credenciales.
-2. Crear un Blueprint desde render.yaml.
-3. En la creación inicial, completar `Auth__Username` y `Auth__PasswordHash`. El hash se genera con `scripts/configure-admin.ps1 -ForRender`.
-4. Revisar los planes elegidos en Render antes de aceptar su creación.
+2. Crear una base PostgreSQL en Neon y copiar su URL de conexión completa.
+3. Crear un Blueprint desde render.yaml.
+4. Completar `DATABASE_URL`, `Auth__Username` y `Auth__PasswordHash`. El hash se genera con `scripts/configure-admin.ps1 -ForRender`.
 5. Verificar `/health`, el login, Swagger y el flujo de productos en la URL generada.
 
-El archivo configura planes gratuitos para demostración. La base gratuita de Render caduca a los 30 días; no usarla como almacenamiento permanente del cliente:
-https://render.com/docs/free
+El archivo configura el servicio web gratuito de Render. La base se administra por separado en Neon.
 
 La aplicación usa una sesión segura de administrador, protección CSRF y límite de intentos. Docker Desktop estaba detenido durante la verificación local: se verificó `dotnet publish`, pero no se ejecutó la imagen Docker.
 
