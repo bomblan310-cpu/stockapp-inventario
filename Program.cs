@@ -73,6 +73,15 @@ builder.Services.AddScoped<IInventoryRepository, PostgresInventoryRepository>();
 builder.Services.AddScoped<InventoryService>();
 var app = builder.Build();
 app.UseForwardedHeaders();
+if (string.Equals(Environment.GetEnvironmentVariable("RENDER"), "true", StringComparison.OrdinalIgnoreCase))
+{
+    // Render redirects public traffic to HTTPS before forwarding it internally over HTTP.
+    app.Use((context, next) =>
+    {
+        context.Request.Scheme = "https";
+        return next();
+    });
+}
 if (builder.Configuration.GetValue<bool>("Database:Initialize"))
     DatabaseSetup.Initialize(app.Services.GetRequiredService<Npgsql.NpgsqlDataSource>(), Path.Combine(app.Environment.ContentRootPath, "Database"));
 app.Use(async (context, next) =>
