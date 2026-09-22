@@ -3,12 +3,20 @@ using DisplayStockAPI.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.HttpOverrides;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 if (int.TryParse(Environment.GetEnvironmentVariable("PORT"), out var port))
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 builder.Services.AddControllers();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    // Render terminates TLS at its proxy and forwards the original scheme.
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -64,6 +72,7 @@ builder.Services.AddSingleton(_ => DatabaseSetup.CreateSource(connection ?? ""))
 builder.Services.AddScoped<IInventoryRepository, PostgresInventoryRepository>();
 builder.Services.AddScoped<InventoryService>();
 var app = builder.Build();
+app.UseForwardedHeaders();
 if (builder.Configuration.GetValue<bool>("Database:Initialize"))
     DatabaseSetup.Initialize(app.Services.GetRequiredService<Npgsql.NpgsqlDataSource>(), Path.Combine(app.Environment.ContentRootPath, "Database"));
 app.Use(async (context, next) =>
