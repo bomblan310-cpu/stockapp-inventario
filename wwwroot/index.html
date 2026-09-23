@@ -9,8 +9,9 @@
   <link rel="stylesheet" href="/carbon-theme.css?v=20260920-1">
   <link rel="stylesheet" href="/agent-dashboard.css?v=1">
   <link rel="stylesheet" href="/dashboard-grid.css?v=7">
+  <link rel="stylesheet" href="/product-pages.css?v=1">
   <script src="/numbers.js?v=20260920-1" defer></script>
-  <script src="/app.js?v=20260921-short-status" defer></script>
+  <script src="/app.js?v=20260923-product-pages" defer></script>
 </head>
 <body>
   <header class="workspace-nav">
@@ -37,7 +38,7 @@
     <section id="productos" class="page" hidden>
       <div class="section-head"><h2>Listado de productos</h2><div class="actions"><a class="button secondary" href="#entrada">Registrar entrada</a><a class="button secondary" href="#salida">Registrar salida</a><a class="button" href="#nuevo">＋ Cargar producto</a></div></div>
       <div class="filters"><label class="grow">Buscar<input id="search" type="search" placeholder="Nombre o marca"></label><label>Categoría<select id="productCategory"><option value="">Todas</option></select></label><label>Disponibilidad<select id="stockFilter"><option value="">Todos</option><option value="low">Por reponer (0–2)</option><option value="empty">Sin unidades</option></select></label></div>
-      <article class="panel table-wrap"><table><thead><tr><th>Producto</th><th>Marca</th><th>Categoría</th><th>Precio unitario</th><th>Stock</th><th>Acciones</th></tr></thead><tbody id="productRows"></tbody></table><p id="productCount" class="muted"></p></article>
+      <article class="panel table-wrap"><table><thead><tr><th>Producto</th><th>Marca</th><th>Categoría</th><th>Precio unitario (Gs.)</th><th>Stock</th><th>Acciones</th></tr></thead><tbody id="productRows"></tbody></table><div class="pagination product-pagination"><p id="productCount" class="muted"></p><div class="page-controls"><button id="productPrevious" class="secondary" type="button">Anterior</button><span id="productPages" aria-live="polite"></span><button id="productNext" class="secondary" type="button">Siguiente</button></div></div></article>
     </section>
     <section id="nuevo" class="page" hidden>
       <p class="lead">Completa los datos del producto. La cantidad inicial se guardará como una entrada.</p>
