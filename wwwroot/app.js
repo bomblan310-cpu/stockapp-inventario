@@ -1,11 +1,13 @@
 "use strict";
 const $ = id => document.getElementById(id);
 let csrfToken = "";
-const state = { products: [], categories: [], dashboardMovements: [], page: 1, history: null, report: null, historyQuery: null, reportQuery: null, ready: false, busy: false };
+const state = { products: [], categories: [], dashboardMovements: [], page: 1, productPage: 1, history: null, report: null, historyQuery: null, reportQuery: null, ready: false, busy: false };
 const titles = { resumen: "Resumen del inventario", productos: "Productos", nuevo: "Cargar producto", entrada: "Registrar entrada", salida: "Registrar salida", historial: "Historial", reportes: "Reportes", categorias: "Categorías" };
 const types = { Added: "Carga inicial", Restocked: "Entrada", Used: "Salida", Updated: "Edición de datos", Voided: "Carga anulada" };
 const number = new Intl.NumberFormat("es-PY");
 const money = new Intl.NumberFormat("es-PY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const productPrice = new Intl.NumberFormat("es-PY", { maximumFractionDigits: 2 });
+const productPageSize = 10;
 const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 const field = (form, key) => form.elements.namedItem(key);
 function message(text, error = false) {
@@ -116,11 +118,17 @@ function renderProducts() {
   const category = $("productCategory").value, availability = $("stockFilter").value;
   const products = state.products.filter(p => (!search || (p.name + " " + p.brand).toLocaleLowerCase().includes(search)) &&
     (!category || p.category === category) && (!availability || (availability === "empty" ? p.quantity === 0 : p.quantity <= 2)));
-  $("productRows").innerHTML = products.map(p => '<tr class="' + (p.quantity === 0 ? 'stock-empty-row' : p.quantity <= 2 ? 'stock-low-row' : 'stock-normal-row') + '"><td><strong>' + esc(p.name) + '</strong></td><td>' + esc(p.brand) + '</td><td>' + esc(p.category) +
-    '</td><td>' + money.format(p.price) + '</td><td><span class="badge stock-status ' + (p.quantity === 0 ? "empty" : p.quantity <= 2 ? "low" : "normal") + '"><i></i>' + (p.quantity === 0 ? 'Sin stock' : p.quantity <= 2 ? 'Bajo' : 'Normal') + '<strong>' + number.format(p.quantity) + ' ' + (p.quantity === 1 ? 'unidad' : 'unidades') + '</strong></span></td><td><div class="actions">' +
+  const pages = Math.max(1, Math.ceil(products.length / productPageSize));
+  state.productPage = Math.min(state.productPage, pages);
+  const start = (state.productPage - 1) * productPageSize;
+  $("productRows").innerHTML = products.slice(start, start + productPageSize).map(p => '<tr class="' + (p.quantity === 0 ? 'stock-empty-row' : p.quantity <= 2 ? 'stock-low-row' : 'stock-normal-row') + '"><td><strong>' + esc(p.name) + '</strong></td><td>' + esc(p.brand) + '</td><td>' + esc(p.category) +
+    '</td><td class="product-price">Gs. ' + productPrice.format(p.price) + '</td><td><span class="badge stock-status ' + (p.quantity === 0 ? "empty" : p.quantity <= 2 ? "low" : "normal") + '"><i></i>' + (p.quantity === 0 ? 'Sin stock' : p.quantity <= 2 ? 'Bajo' : 'Normal') + '<strong>' + number.format(p.quantity) + ' ' + (p.quantity === 1 ? 'unidad' : 'unidades') + '</strong></span></td><td><div class="actions">' +
     '<button class="secondary" data-action="edit" data-id="' + p.id + '">Editar</button><button class="secondary" data-action="entry" data-id="' + p.id + '">Entrada</button><button class="secondary" data-action="exit" data-id="' + p.id + '" ' + (p.quantity ? "" : "disabled") + '>Salida</button>' +
     '</div></td></tr>').join("") || '<tr><td colspan="6" class="empty-state">No hay productos que coincidan. Puedes cargar uno nuevo arriba.</td></tr>';
-  $("productCount").textContent = number.format(products.length) + " de " + number.format(state.products.length) + " productos";
+  $("productCount").textContent = products.length ? number.format(start + 1) + "–" + number.format(Math.min(start + productPageSize, products.length)) + " de " + number.format(products.length) + " productos" : "0 productos";
+  $("productPrevious").disabled = state.productPage === 1;
+  $("productNext").disabled = state.productPage === pages;
+  $("productPages").textContent = "Página " + number.format(state.productPage) + " de " + number.format(pages);
 }
 function route() {
   let section = location.hash.slice(1) || "resumen";
@@ -329,7 +337,9 @@ $("refresh").onclick = async () => {
   try { await reload(); route(); message("Inventario actualizado."); } catch (e) { showError(e); }
   finally { $("refresh").disabled = false; }
 };
-for (const id of ["search", "productCategory", "stockFilter"]) $(id).addEventListener("input", renderProducts);
+for (const id of ["search", "productCategory", "stockFilter"]) $(id).addEventListener("input", () => { state.productPage = 1; renderProducts(); });
+$("productPrevious").addEventListener("click", () => { state.productPage--; renderProducts(); });
+$("productNext").addEventListener("click", () => { state.productPage++; renderProducts(); });
 const today = new Date(), monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 for (const id of ["historyFilters", "reportFilters"]) {
   field($(id), "from").value = dateValue(monthStart);

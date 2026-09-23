@@ -1,0 +1,7 @@
+#productos .product-price{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:600}
+#productos .product-pagination{margin:8px 0 0;padding:14px 2px 2px;border-top:1px solid #7bffae18}
+#productos .product-pagination #productCount{margin:0}
+#productos .page-controls{display:flex;align-items:center;gap:12px}
+#productos .page-controls button{min-height:34px;padding:7px 12px}
+#productos .page-controls button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:600px){#productos .product-pagination{align-items:flex-start}#productos .page-controls{width:100%;justify-content:space-between}}
