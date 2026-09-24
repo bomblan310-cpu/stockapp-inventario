@@ -41,12 +41,37 @@ function options(select, rows, first) {
   if (rows.some(([value]) => value === selected)) select.value = selected;
 }
 function refreshMovementProducts(form) {
-  const search = form.querySelector(".movement-product-search").value.trim().toLocaleLowerCase();
-  const products = state.products.filter(p => !search || (p.name + " " + p.brand).toLocaleLowerCase().includes(search));
-  const rows = products.map(p => [p.id, p.name + " · " + p.brand + " (" + number.format(p.quantity) + " disponibles)"]);
-  options(field(form, "productId"), rows, products.length ? "Seleccionar producto" : "No hay coincidencias");
-  form.querySelector(".movement-search-count").textContent = search ? number.format(products.length) + (products.length === 1 ? " producto encontrado" : " productos encontrados") : "";
+  const input = form.querySelector(".movement-product-search");
+  const selected = state.products.find(p => p.id === field(form, "productId").value);
+  if (selected) input.value = selected.name + " · " + selected.brand;
+  else { input.value = ""; field(form, "productId").value = ""; }
   preview(form);
+}
+function showMovementProducts(form) {
+  const input = form.querySelector(".movement-product-search");
+  const results = form.querySelector(".movement-product-results");
+  const search = input.value.trim().toLocaleLowerCase();
+  const matches = state.products.filter(p => !search || (p.name + " " + p.brand).toLocaleLowerCase().includes(search));
+  results.innerHTML = matches.slice(0, 12).map((p, index) => '<button type="button" role="option" id="' + results.id + '-option-' + index + '" data-id="' + esc(p.id) + '">' + esc(p.name) + ' · ' + esc(p.brand) + ' <small>(' + number.format(p.quantity) + ' disponibles)</small></button>').join("") || '<p class="muted">No hay productos que coincidan.</p>';
+  if (matches.length > 12) results.innerHTML += '<p class="muted">' + number.format(matches.length - 12) + ' más. Escribe para acotar la búsqueda.</p>';
+  results.hidden = false;
+  input.setAttribute("aria-expanded", "true");
+  input.removeAttribute("aria-activedescendant");
+  input.dataset.activeIndex = "-1";
+}
+function hideMovementProducts(form) {
+  const input = form.querySelector(".movement-product-search");
+  form.querySelector(".movement-product-results").hidden = true;
+  input.setAttribute("aria-expanded", "false");
+  input.removeAttribute("aria-activedescendant");
+}
+function selectMovementProduct(form, id) {
+  const p = state.products.find(p => p.id === id);
+  if (!p) return;
+  field(form, "productId").value = p.id;
+  refreshMovementProducts(form);
+  form.querySelector(".movement-product-search").focus();
+  hideMovementProducts(form);
 }
 function dateValue(date) {
   return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, "0"), String(date.getDate()).padStart(2, "0")].join("-");
@@ -205,13 +230,41 @@ $("productForm").addEventListener("submit", e => {
 });
 for (const id of ["entryForm", "exitForm"]) {
   const form = $(id);
-  form.querySelector(".movement-product-search").addEventListener("input", () => refreshMovementProducts(form));
-  form.addEventListener("input", () => preview(form));
-  field(form, "productId").addEventListener("change", () => preview(form));
+  const search = form.querySelector(".movement-product-search");
+  search.addEventListener("focus", () => showMovementProducts(form));
+  search.addEventListener("input", () => { field(form, "productId").value = ""; showMovementProducts(form); preview(form); });
+  search.addEventListener("keydown", event => {
+    const results = form.querySelector(".movement-product-results");
+    if (event.key === "Escape") { hideMovementProducts(form); return; }
+    if (results.hidden && (event.key === "ArrowDown" || event.key === "ArrowUp")) showMovementProducts(form);
+    const items = [...results.querySelectorAll("button[data-id]")];
+    if (!items.length) return;
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      const current = Number(search.dataset.activeIndex ?? -1);
+      const next = event.key === "ArrowDown" ? (current + 1) % items.length : (current + items.length) % items.length;
+      search.dataset.activeIndex = String(next);
+      items.forEach((item, index) => item.setAttribute("aria-selected", String(index === next)));
+      search.setAttribute("aria-activedescendant", items[next].id);
+      items[next].scrollIntoView({ block: "nearest" });
+    } else if (event.key === "Enter" && !results.hidden) {
+      const selected = items[Number(search.dataset.activeIndex)];
+      if (selected) { event.preventDefault(); selectMovementProduct(form, selected.dataset.id); }
+    }
+  });
+  form.querySelector(".movement-product-results").addEventListener("click", event => {
+    const item = event.target.closest("button[data-id]");
+    if (item) selectMovementProduct(form, item.dataset.id);
+  });
+  form.querySelector(".movement-product-picker").addEventListener("focusout", event => {
+    if (!event.currentTarget.contains(event.relatedTarget)) hideMovementProducts(form);
+  });
+  form.addEventListener("input", event => { if (event.target !== search) preview(form); });
   form.addEventListener("submit", e => {
     e.preventDefault();
     saving(form, async () => {
       const productId = field(form, "productId").value, outgoing = id === "exitForm";
+      if (!productId) throw new Error("Selecciona un producto de la lista de coincidencias.");
       const quantity = InventoryNumbers.read(field(form, "quantity"));
       if (!Number.isInteger(quantity) || quantity < 1) throw new Error("La cantidad debe ser un entero mayor que cero.");
       await api("products/" + productId + (outgoing ? "/use" : "/restock"), post({ quantity, reason: field(form, "reason").value.trim() }));
@@ -243,9 +296,7 @@ document.addEventListener("click", async e => {
       $("productFormTitle").textContent = "Editar producto"; location.hash = "nuevo"; route();
     } else if ((action === "entry" || action === "exit") && p) {
       const form = $(action === "entry" ? "entryForm" : "exitForm");
-      form.querySelector(".movement-product-search").value = "";
-      refreshMovementProducts(form);
-      field(form, "productId").value = p.id; preview(form); location.hash = action === "entry" ? "entrada" : "salida";
+      field(form, "productId").value = p.id; refreshMovementProducts(form); location.hash = action === "entry" ? "entrada" : "salida";
     } else if ((action === "archive" || action === "delete" || action === "void") && p) {
       const deleting = action === "delete";
       $("confirmDialog").querySelector("h2").textContent = deleting ? "Eliminar definitivamente" : "Archivar producto";
