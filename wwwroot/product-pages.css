@@ -5,3 +5,4 @@
 #productos .page-controls button{min-height:34px;padding:7px 12px}
 #productos .page-controls button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:600px){#productos .product-pagination{align-items:flex-start}#productos .page-controls{width:100%;justify-content:space-between}}
+#entrada .movement-search-count,#salida .movement-search-count{display:block;margin-top:-16px}
