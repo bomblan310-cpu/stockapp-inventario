@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="/carbon-theme.css?v=20260920-1">
   <link rel="stylesheet" href="/agent-dashboard.css?v=1">
   <link rel="stylesheet" href="/dashboard-grid.css?v=7">
-  <link rel="stylesheet" href="/product-pages.css?v=1">
+  <link rel="stylesheet" href="/product-pages.css?v=2">
   <script src="/numbers.js?v=20260920-1" defer></script>
-  <script src="/app.js?v=20260923-product-search" defer></script>
+  <script src="/app.js?v=20260923-product-combobox" defer></script>
 </head>
 <body>
   <header class="workspace-nav">
@@ -55,9 +55,7 @@
     <section id="entrada" class="page" hidden>
       <p class="lead">¿Recibiste más unidades? Selecciona un producto y registra la cantidad.</p>
       <form id="entryForm" class="panel form-panel"><h2>Registrar entrada</h2>
-        <label>Buscar producto<input class="movement-product-search" type="search" placeholder="Escribe nombre o marca" autocomplete="off"></label>
-        <label>Producto<select name="productId" required></select></label>
-        <small class="movement-search-count muted" role="status" aria-live="polite"></small>
+        <div class="movement-product-picker"><label for="entryProductSearch">Producto</label><input id="entryProductSearch" class="movement-product-search" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="entryProductResults" placeholder="Escribe nombre o marca" autocomplete="off" required><input name="productId" type="hidden"><div id="entryProductResults" class="movement-product-results" role="listbox" hidden></div></div>
         <p class="stock-preview"></p>
         <label>Cantidad recibida<input name="quantity" type="text" inputmode="numeric" data-number="integer" data-min="1" data-max="2147483647" required placeholder="Ej.: 1.000"></label>
         <label>Motivo o referencia <span class="muted">(opcional)</span><textarea name="reason" maxlength="300" rows="3" placeholder="Ej.: Compra a proveedor, factura 125"></textarea></label>
@@ -67,9 +65,7 @@
     <section id="salida" class="page" hidden>
       <p class="lead">Registra las unidades que vendiste, utilizaste o retiraste.</p>
       <form id="exitForm" class="panel form-panel"><h2>Registrar salida</h2>
-        <label>Buscar producto<input class="movement-product-search" type="search" placeholder="Escribe nombre o marca" autocomplete="off"></label>
-        <label>Producto<select name="productId" required></select></label>
-        <small class="movement-search-count muted" role="status" aria-live="polite"></small>
+        <div class="movement-product-picker"><label for="exitProductSearch">Producto</label><input id="exitProductSearch" class="movement-product-search" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="exitProductResults" placeholder="Escribe nombre o marca" autocomplete="off" required><input name="productId" type="hidden"><div id="exitProductResults" class="movement-product-results" role="listbox" hidden></div></div>
         <p class="stock-preview"></p>
         <label>Cantidad retirada<input name="quantity" type="text" inputmode="numeric" data-number="integer" data-min="1" data-max="2147483647" required placeholder="Ej.: 1.000"></label>
         <label>Motivo o referencia <span class="muted">(opcional)</span><textarea name="reason" maxlength="300" rows="3" placeholder="Ej.: Venta a cliente, reparación, producto dañado"></textarea></label>
